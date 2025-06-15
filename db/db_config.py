@@ -6,7 +6,7 @@ load_dotenv()
 
 def get_connection():
     return mysql.connector.connect(
-        host="gondola.proxy.rlwy.net",
+        host="mysql-xl07.railway.internal",
         user="root",
         password="zSZTEQIkTIvckSAbxaqiIMqphRyuUfzs",
         database="railway",
