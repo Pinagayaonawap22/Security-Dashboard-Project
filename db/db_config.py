@@ -6,10 +6,10 @@ load_dotenv()
 
 def get_connection():
     return mysql.connector.connect(
-        host="mysql-xl07.railway.internal",
+        host="containers-us-west-17.railway.app",
         user="root",
         password="zSZTEQIkTIvckSAbxaqiIMqphRyuUfzs",
         database="railway",
-        port=3306,
+        port=36277,
         unix_socket=None
     )
