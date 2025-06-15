@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
-from db_config import get_connection
+from database.db_config import get_connection
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # change this to something secure
@@ -15,9 +15,10 @@ def register():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        email = request.form.get('email')
         role = request.form.get('role')
 
-        if not username or not password or not role:
+        if not username or not password or not role or not email:
             return "Missing fields", 400
 
         password_hash = generate_password_hash(password)
@@ -25,15 +26,17 @@ def register():
         conn = get_connection()
         cursor = conn.cursor()
 
+        # Check if username already exists
         cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
         if cursor.fetchone():
             cursor.close()
             conn.close()
             return "Username already exists", 409
 
+        # Insert user
         cursor.execute(
-            "INSERT INTO users (username, password_hash, role) VALUES (%s, %s, %s)",
-            (username, password_hash, role)
+            "INSERT INTO users (username, password_hash, role, email) VALUES (%s, %s, %s, %s)",
+            (username, password_hash, role, email)
         )
         conn.commit()
         cursor.close()
@@ -41,7 +44,8 @@ def register():
 
         return redirect(url_for('login'))
 
-    return render_template('registration.html')
+    return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
