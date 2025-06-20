@@ -10,6 +10,6 @@ def get_connection():
         user="root",
         password="zSZTEQIkTIvckSAbxaqiIMqphRyuUfzs",
         database="railway",
-        port=36277,
+        port=17843,
         unix_socket=None
     )
