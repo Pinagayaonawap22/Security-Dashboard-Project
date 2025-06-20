@@ -10,10 +10,13 @@ from db.model import create_tables
 app = Flask(__name__)
 app.secret_key = 'SECRET_KEY'
 
-# Create required tables on startup
-conn = get_connection()
-create_tables(conn)
-conn.close()
+try:
+    conn = get_connection()
+    create_tables(conn)
+    conn.close()
+except Exception as e:
+    print(f"[ERROR] Failed to connect to database on startup: {e}")
+
 
 # Register all routes
 init_routes(app)
