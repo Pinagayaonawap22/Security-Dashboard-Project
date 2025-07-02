@@ -6,7 +6,7 @@ nixPkgs = [
   "python312Packages.mysql-connector",
   "python312Packages.python-dotenv",
   "python312Packages.pdfkit",
-  "wkhtmltopdf" # required by pdfkit to generate PDFs
+  "wkhtmltopdf" # for PDF generation
 ]
 
 [phases.install]
