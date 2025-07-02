@@ -11,7 +11,7 @@ bp = Blueprint('auth_routes', __name__)
 def home():
     return redirect(url_for('auth_routes.register'))
 
-@bp.route('/register', methods=['GET', 'POST'], endpoint='register_user')
+@bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form.get('username')
