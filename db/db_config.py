@@ -1,15 +1,11 @@
 import os
 import mysql.connector
-from dotenv import load_dotenv
-
-load_dotenv()
 
 def get_connection():
     return mysql.connector.connect(
-        host="containers-us-west-17.railway.app",  # ✅ this is the PUBLIC HOSTNAME
-        user="root",
-        password="zSZTEQIkTIvckSAbxaqiIMqphRyuUfzs",
-        database="railway",
-        port=3306,  # or the actual Railway public port if shown
-        unix_socket=None
+        host=os.getenv("MYSQLHOST", "mysql-xl07.railway.internal"),
+        port=int(os.getenv("MYSQLPORT", 3306)),
+        user=os.getenv("MYSQLUSER", "root"),
+        password=os.getenv("MYSQLPASSWORD"),
+        database=os.getenv("MYSQLDATABASE", "railway")
     )
