@@ -1,16 +1,16 @@
 [phases.setup]
 nixPkgs = [
   "python312",
-  "python312Packages.gunicorn",
   "python312Packages.flask",
+  "python312Packages.gunicorn",
   "python312Packages.mysql-connector",
   "python312Packages.python-dotenv",
   "python312Packages.pdfkit",
-  "wkhtmltopdf" # for PDF generation
+  "wkhtmltopdf"
 ]
 
 [phases.install]
-cmds = ["echo 'Using Nix to install dependencies, skipping pip.'"]
+cmds = ["echo 'Dependencies handled by Nix, skipping pip install.'"]
 
 [start]
 cmd = "gunicorn app:app"
