@@ -8,7 +8,9 @@ from db.db_config import get_connection
 from db.model import create_tables
 
 app = Flask(__name__)
+app.debug = True
 app.secret_key = 'SECRET_KEY'
+
 
 try:
     conn = get_connection()
