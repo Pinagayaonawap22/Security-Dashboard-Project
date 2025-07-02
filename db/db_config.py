@@ -1,11 +1,11 @@
-import os
 import mysql.connector
+import os
 
 def get_connection():
     return mysql.connector.connect(
-        host=os.getenv("MYSQLHOST", "mysql-xl07.railway.internal"),
-        port=int(os.getenv("MYSQLPORT", 3306)),
-        user=os.getenv("MYSQLUSER", "root"),
-        password=os.getenv("MYSQLPASSWORD"),
-        database=os.getenv("MYSQLDATABASE", "railway")
+        host="sql12.freesqldatabase.com",         # <-- replace with actual host
+        port=3306,                               # usually 3306
+        user="sql12787920",                      # your DB username
+        password="wfcdEp3R45",             # your DB password
+        database="sql12787920"                   # your DB name
     )
