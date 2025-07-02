@@ -1,16 +1,16 @@
+[build]
+nixpkgsArchive = "https://github.com/NixOS/nixpkgs/archive/nixos-23.05.tar.gz"
+
 [phases.setup]
-nixPkgs = [
-  "python312",
-  "python312Packages.flask",
-  "python312Packages.gunicorn",
-  "python312Packages.mysql-connector",
-  "python312Packages.python-dotenv",
-  "python312Packages.pdfkit",
-  "wkhtmltopdf"
-]
+nixPkgs = ["python312", "python312Packages.pip"]
 
 [phases.install]
-cmds = ["echo 'Dependencies handled by Nix, skipping pip install.'"]
+cmds = [
+  "python3 -m venv venv",
+  ". venv/bin/activate",
+  "pip install --upgrade pip",
+  "pip install -r requirements.txt"
+]
 
 [start]
-cmd = "gunicorn app:app"
+cmd = ". venv/bin/activate && gunicorn app:app"
