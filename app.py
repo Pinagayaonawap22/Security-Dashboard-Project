@@ -11,7 +11,6 @@ app = Flask(__name__)
 app.debug = True
 app.secret_key = 'SECRET_KEY'
 
-
 try:
     conn = get_connection()
     create_tables(conn)

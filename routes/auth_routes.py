@@ -13,30 +13,87 @@ def home():
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        role = request.form.get('role')
-        email = request.form.get('email')
-        if not username or not password or not role or not email:
-            return "All fields are required", 400
+    try:
+        if request.method == 'POST':
+            username = request.form.get('username')
+            password = request.form.get('password')
+            role = request.form.get('role')
+            email = request.form.get('email')
 
-        hashed_pw = generate_password_hash(password)
-        conn = get_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE username = %s", (username,))
-        if cur.fetchone():
+            if not username or not password or not role or not email:
+                return "All fields are required", 400
+
+            hashed_pw = generate_password_hash(password)
+
+            conn = get_connection()
+            cur = conn.cursor()
+
+            cur.execute("SELECT * FROM users WHERE username = %s", (username,))
+            if cur.fetchone():
+                cur.close()
+                conn.close()
+                return "Username already exists", 409
+
+            cur.execute("""
+                INSERT INTO users (username, password_hash, role, email)
+                VALUES (%s, %s, %s, %s)
+            """, (username, hashed_pw, role, email))
+
+            conn.commit()
             cur.close()
             conn.close()
-            return "Username already exists", 409
-        cur.execute("INSERT INTO users (username, password_hash, role, email) VALUES (%s, %s, %s, %s)",
-                    (username, hashed_pw, role, email))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return redirect(url_for('auth_routes.login'))
 
-    return render_template('register.html')
+            return redirect(url_for('auth_routes.login'))
+
+        return render_template('register.html')
+
+    except Exception as e:
+        import traceback
+        print("⚠️ Registration error:", e)
+        traceback.print_exc()
+        return "Internal Server Error", 500
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    try:
+        if request.method == 'POST':
+            username = request.form.get('username')
+            password = request.form.get('password')
+            role = request.form.get('role')
+            email = request.form.get('email')
+
+            if not username or not password or not role or not email:
+                return "All fields are required", 400
+
+            hashed_pw = generate_password_hash(password)
+
+            conn = get_connection()
+            cur = conn.cursor()
+
+            cur.execute("SELECT * FROM users WHERE username = %s", (username,))
+            if cur.fetchone():
+                cur.close()
+                conn.close()
+                return "Username already exists", 409
+
+            cur.execute("""
+                INSERT INTO users (username, password_hash, role, email)
+                VALUES (%s, %s, %s, %s)
+            """, (username, hashed_pw, role, email))
+
+            conn.commit()
+            cur.close()
+            conn.close()
+
+            return redirect(url_for('auth_routes.login'))
+
+        return render_template('register.html')
+
+    except Exception as e:
+        import traceback
+        print("⚠️ Registration error:", e)
+        traceback.print_exc()
+        return "Internal Server Error", 500
+
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
