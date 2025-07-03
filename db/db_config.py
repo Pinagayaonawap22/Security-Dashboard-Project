@@ -1,14 +1,15 @@
+
 import mysql.connector
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 def get_connection():
     return mysql.connector.connect(
-        host="http://sql12.freesqldatabase.com/",         # <-- replace with actual host
-        port=3306,                               # usually 3306
-        user="sql12787920",                      # your DB username
-        password="wfcdEp3R45",             # your DB password
-        database="sql12787920",
-        connect_timeout=10,
-        use_pure=True# your DB name
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
+        port=int(os.getenv("DB_PORT"))  # ✅ make sure this is an int
     )
-
