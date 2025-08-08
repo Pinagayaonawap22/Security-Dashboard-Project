@@ -24,12 +24,13 @@ def register():
         hashed_pw = generate_password_hash(password)
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE username = %s", (username,))
+        cur.execute("SELECT * FROM users WHERE username = ?", (username,))
+
         if cur.fetchone():
             cur.close()
             conn.close()
             return "Username already exists", 409
-        cur.execute("INSERT INTO users (username, password_hash, role, email) VALUES (%s, %s, %s, %s)",
+        cur.execute("INSERT INTO users (username, password_hash, role, email) VALUES (?, ?, ?, ?)",
                     (username, hashed_pw, role, email))
         conn.commit()
         cur.close()
