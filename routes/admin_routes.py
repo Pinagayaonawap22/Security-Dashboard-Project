@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request
 import pdfkit
+import sqlite3
+import os
 from db.db_config import get_connection
 from controllers.admin import (
     get_all_users,
@@ -65,20 +67,31 @@ def edit_incident(incident_id):
     if session.get('role') != 'admin':
         return redirect(url_for('auth_routes.login'))
 
+    conn = get_connection()  # ✅ make sure we have a connection here
+
     if request.method == 'POST':
         new_status = request.form.get('status')
-        update_incident_status(incident_id, new_status)
-        log_admin_action(session.get('username'), f"Updated status of incident #{incident_id} to {new_status}")
+
+        cur = conn.cursor()
+        cur.execute("UPDATE incidents SET status = ? WHERE id = ?", (new_status, incident_id))
+        conn.commit()
+        cur.close()
+
+        log_admin_action(session.get('username'),
+                         f"Updated status of incident #{incident_id} to {new_status}")
+
+        conn.close()
         return redirect(url_for('admin_routes.admin_dashboard'))
 
-    # Show edit form
-    conn = get_connection()
-    cur = conn.cursor(dictionary=True)
-    cur.execute("SELECT * FROM incidents WHERE id = %s", (incident_id,))
+    # GET request: fetch incident details
+    cur = conn.cursor(dictionary=True)  # ✅ dictionary=True works for MySQL
+    cur.execute("SELECT * FROM incidents WHERE id = ?", (incident_id,))
     incident = cur.fetchone()
     cur.close()
     conn.close()
+
     return render_template('admin.html', incident=incident)
+
 
 @bp.route('/admin/export/csv')
 def export_csv():

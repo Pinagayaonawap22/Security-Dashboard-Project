@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import mysql.connector
+import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from database.db_config import get_connection
 
@@ -27,7 +27,7 @@ def register():
         cursor = conn.cursor()
 
         # Check if username already exists
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
         if cursor.fetchone():
             cursor.close()
             conn.close()
@@ -35,7 +35,7 @@ def register():
 
         # Insert user
         cursor.execute(
-            "INSERT INTO users (username, password_hash, role, email) VALUES (%s, %s, %s, %s)",
+            "INSERT INTO users (username, password_hash, role, email) VALUES (?, ?, ?, ?)",
             (username, password_hash, role, email)
         )
         conn.commit()
@@ -54,8 +54,8 @@ def login():
         password = request.form.get('password')
 
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        cursor = conn.row_factory = sqlite3.Row
+        cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
         user = cursor.fetchone()
         cursor.close()
         conn.close()
